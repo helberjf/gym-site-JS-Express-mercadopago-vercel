@@ -452,7 +452,7 @@ document.head.appendChild(alertStyles);
 // Configure sua chave pública do Mercado Pago
   const publicKey = "APP_USR-b2f576ee-745b-454e-af2e-adf3c19a80bf";
   // Configure o ID de preferência que você deve receber do seu backend
-  const preferenceId = "#5870563570";
+  const preferenceId = "1234";
 
   // Inicializa o SDK do Mercado Pago
   const mp = new MercadoPago(publicKey);
