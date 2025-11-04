@@ -48,6 +48,7 @@ Após o primeiro deploy, configure as variáveis:
 | Nome | Valor | Ambiente |
 |------|-------|----------|
 | `MP_ACCESS_TOKEN` | Seu token do Mercado Pago | Production, Preview, Development |
+| `MP_INTEGRATOR_ID` | `dev_24c65fb163bf11ea96500242ac130004` (opcional - já configurado no código) | Production, Preview, Development |
 
 ### 4. URLs de Redirecionamento (Opcional)
 

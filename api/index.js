@@ -20,6 +20,7 @@ const client = new MercadoPagoConfig({
   accessToken: process.env.MP_ACCESS_TOKEN,
   options: {
     timeout: 5000, // Timeout de 5 segundos (padrão recomendado)
+    integratorId: process.env.MP_INTEGRATOR_ID || 'dev_24c65fb163bf11ea96500242ac130004',
   },
 });
 
@@ -160,6 +161,7 @@ app.post("/create-preference", (req, res) => {
 
     // Criar preferência usando SDK oficial
     // Seguindo padrão: preference.create({ body })
+    // O Integrator ID já está configurado no client, será enviado automaticamente
     preference.create({ body: preferenceBody })
       .then((response) => {
         // Response do SDK segue estrutura: { id, init_point, ... }

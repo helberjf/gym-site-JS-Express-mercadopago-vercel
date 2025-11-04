@@ -110,6 +110,8 @@ vercel
 
 ### Opcionais
 
+- `MP_INTEGRATOR_ID`: ID do integrador (já configurado como `dev_24c65fb163bf11ea96500242ac130004` no código)
+
 - `MP_BACK_URL_SUCCESS`: URL de redirecionamento após pagamento aprovado
 - `MP_BACK_URL_FAILURE`: URL de redirecionamento após pagamento recusado
 - `MP_BACK_URL_PENDING`: URL de redirecionamento para pagamento pendente

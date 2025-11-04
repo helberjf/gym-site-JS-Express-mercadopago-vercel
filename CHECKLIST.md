@@ -21,7 +21,7 @@ Use este checklist antes de fazer o deploy:
 - [x] API detecta ambiente (Vercel vs Local)
 - [x] Front-end detecta ambiente e ajusta URLs
 - [x] Handler do Vercel configurado corretamente
-- [x] CORS configurado na API
+- [x] CORS configurado na API 
 
 ## 🚀 Deploy
 
