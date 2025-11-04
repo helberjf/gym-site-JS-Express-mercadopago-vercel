@@ -1,5 +1,19 @@
 {
-  "dependencies": {
-    "mercadopago": "^2.9.0"
-  }
+  "name": "site-gym",
+  "version": "1.0.0",
+  "description": "Maquina Team - Site de Academia de Lutas com integração Mercado Pago",
+  "private": true,
+  "scripts": {
+    "dev:api": "cd api && npm run dev",
+    "start:api": "cd api && npm start",
+    "install:all": "cd api && npm install"
+  },
+  "keywords": [
+    "academia",
+    "lutas",
+    "mercadopago",
+    "payment"
+  ],
+  "author": "",
+  "license": "MIT"
 }

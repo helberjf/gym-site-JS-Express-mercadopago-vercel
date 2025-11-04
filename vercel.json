@@ -6,8 +6,8 @@
       "use": "@vercel/node"
     },
     {
-      "src": "frontend/**/*",
-      "use": "@vercel/static-build"
+      "src": "front-end/**/*",
+      "use": "@vercel/static"
     }
   ],
   "routes": [
@@ -17,7 +17,10 @@
     },
     {
       "src": "/(.*)",
-      "dest": "/frontend/$1"
+      "dest": "/front-end/$1"
     }
-  ]
+  ],
+  "env": {
+    "NODE_ENV": "production"
+  }
 }

@@ -452,13 +452,46 @@ document.head.appendChild(alertStyles);
 // Replace the placeholder below with your Mercado Pago publishable key before testing in sandbox/production.
 const publicKey = 'APP_USR-b2f576ee-745b-454e-af2e-adf3c19a80bf';
 
+// Detectar se está em desenvolvimento local ou produção
+function getApiUrl() {
+    const hostname = window.location.hostname;
+    const protocol = window.location.protocol;
+    const port = window.location.port;
+    
+    // Detectar ambiente Vercel (produção)
+    const isVercel = hostname.includes('vercel.app') || 
+                     hostname.includes('vercel.com') ||
+                     hostname.includes('.now.sh') ||
+                     (hostname !== 'localhost' && hostname !== '127.0.0.1' && protocol === 'https:');
+    
+    // Detectar desenvolvimento local
+    const isLocalDev = protocol === 'file:' || 
+                       (hostname === 'localhost' && port !== '8080' && port !== '') ||
+                       hostname === '127.0.0.1';
+    
+    if (isVercel) {
+        // Em produção (Vercel), usar URL relativa com /api
+        return '/api/create-preference';
+    } else if (isLocalDev) {
+        // Em desenvolvimento local, apontar diretamente para a API na porta 8080
+        // Sem o prefixo /api porque o servidor local não precisa do handler do Vercel
+        return 'http://localhost:8080/create-preference';
+    } else {
+        // Fallback: assumir que é produção e usar /api
+        return '/api/create-preference';
+    }
+}
+
 function createPreferenceOnBackend(productId) {
     const payload = {
         product_id: productId,
         title: `Plano ${productId.replace('plan_', '')}`,
     };
 
-    return fetch('/api/create-preference', {
+    const apiUrl = getApiUrl();
+    console.log('Making request to:', apiUrl);
+
+    return fetch(apiUrl, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload),
