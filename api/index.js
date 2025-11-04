@@ -24,9 +24,31 @@ app.get("/ping", (req, res) => {
   res.send("pong");
 });
 
-// Route to create preference mp
+// Rota de teste para verificar se a API está funcionando
+app.get("/test", (req, res) => {
+  res.json({
+    status: "OK",
+    message: "API está funcionando!",
+    timestamp: new Date().toISOString(),
+    endpoints: {
+      "POST /create-preference": "Cria uma preferência de pagamento no Mercado Pago",
+      "GET /ping": "Health check",
+      "POST /webhook": "Webhook do Mercado Pago"
+    }
+  });
+});
 
-app.post ("/create-preference", (req, res) => {
+// Route to create preference mp
+// Add GET route for testing/info
+app.get("/create-preference", (req, res) => {
+  res.status(405).json({ 
+    error: "Method Not Allowed",
+    message: "Esta rota aceita apenas requisições POST. Use o método POST para criar uma preferência de pagamento.",
+    allowedMethods: ["POST"]
+  });
+});
+
+app.post("/create-preference", (req, res) => {
   try {
     const {
       product_id,
@@ -164,24 +186,35 @@ app.post('/webhook', (req, res) => {
 });
 
 
-// Export handler for Vercel serverless functions
-// Vercel expects a function that receives (req, res) and handles routing
-export default function handler(req, res) {
-  // Handle CORS preflight
-  if (req.method === 'OPTIONS') {
-    res.status(200).end();
-    return;
+// Handler for Vercel serverless functions
+// When using @vercel/node with a single file routing multiple paths,
+// we need to export a function that handles the request
+function handler(req, res) {
+  // Remove /api prefix from path for internal routing
+  // Vercel routes /api/* to this file, but Express routes expect /create-preference
+  const originalUrl = req.url;
+  if (originalUrl.startsWith('/api/')) {
+    req.url = originalUrl.replace('/api', '');
   }
   
   // Use Express app to handle the request
   app(req, res);
 }
 
+// Export handler for Vercel (must be at top level)
+export default handler;
+
 // Start server for local development (only runs if not in Vercel environment)
-if (process.env.VERCEL !== '1' && typeof require !== 'undefined') {
-  // Only run in Node.js environment (not Vercel serverless)
+// Check if we're running in a serverless environment (Vercel)
+const isVercel = process.env.VERCEL === '1' || process.env.VERCEL_ENV;
+
+if (!isVercel) {
+  // Start server for local development
   const port = process.env.PORT || 8080;
   app.listen(port, () => {
     console.log(`The server is now running on Port ${port}`);
+    console.log(`Test endpoints:`);
+    console.log(`  GET  http://localhost:${port}/ping`);
+    console.log(`  POST http://localhost:${port}/create-preference`);
   });
 }
