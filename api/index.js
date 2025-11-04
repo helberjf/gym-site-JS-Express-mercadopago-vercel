@@ -11,13 +11,20 @@ app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 app.use(cors());
 
-// SDK do Mercado Pago
+// SDK do Mercado Pago - Seguindo padrão oficial do SDK
 import { MercadoPagoConfig, Preference } from "mercadopago";
 
-// Adicione credenciais e integrator id (se fornecido)
+// Inicializar cliente do Mercado Pago
+// Seguindo padrão do SDK oficial: https://github.com/mercadopago/sdk-nodejs
 const client = new MercadoPagoConfig({
-  accessToken: process.env.MP_ACCESS_TOKEN, // ← Troque por sua chave privada
+  accessToken: process.env.MP_ACCESS_TOKEN,
+  options: {
+    timeout: 5000, // Timeout de 5 segundos (padrão recomendado)
+  },
 });
+
+// Inicializar API de Preference
+const preference = new Preference(client);
 
 // Routes Ping -- útil para monitoring.
 app.get("/ping", (req, res) => { 
@@ -120,8 +127,7 @@ app.post("/create-preference", (req, res) => {
     // external_reference: use provided or generate one
     const externalRef = external_reference || process.env.MP_EXTERNAL_REFERENCE || `site-gym-${PROD_ID}-${Date.now()}`;
 
-    const preference = new Preference(client);
-
+    // Criar body da preferência seguindo padrão do SDK oficial
     const preferenceBody = {
       items: [
         {
@@ -137,11 +143,11 @@ app.post("/create-preference", (req, res) => {
       payment_methods: {},
       installments: MAX_INSTALLMENTS,
       back_urls: {
-        success: process.env.MP_BACK_URL_SUCCESS || 'https://site-gym-weld.vercel.app/success',
-        failure: process.env.MP_BACK_URL_FAILURE || 'https://site-gym-weld.vercel.app/failure',
-        pending: process.env.MP_BACK_URL_PENDING || 'https://site-gym-weld.vercel.app/pending'
+        success: process.env.MP_BACK_URL_SUCCESS || (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}/front-end/success.html` : 'https://site-gym-weld.vercel.app/front-end/success.html'),
+        failure: process.env.MP_BACK_URL_FAILURE || (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}/front-end/failure.html` : 'https://site-gym-weld.vercel.app/front-end/failure.html'),
+        pending: process.env.MP_BACK_URL_PENDING || (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}/front-end/pending.html` : 'https://site-gym-weld.vercel.app/front-end/pending.html')
       },
-      notification_url: process.env.MP_NOTIFICATION_URL || `${process.env.BACKEND_URL || 'http://localhost:8080'}/webhook`,
+      notification_url: process.env.MP_NOTIFICATION_URL || (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}/api/webhook` : `${process.env.BACKEND_URL || 'http://localhost:8080'}/api/webhook`),
       auto_return: 'approved',
     };
 
@@ -152,18 +158,26 @@ app.post("/create-preference", (req, res) => {
       preferenceBody.payment_methods.excluded_payment_types = excludedTypes;
     }
 
-    // Create preference
+    // Criar preferência usando SDK oficial
+    // Seguindo padrão: preference.create({ body })
     preference.create({ body: preferenceBody })
-      .then((data) => {
-        console.log('Preference created', { id: data.id });
+      .then((response) => {
+        // Response do SDK segue estrutura: { id, init_point, ... }
+        console.log('Preference created successfully', { id: response.id });
         res.status(200).json({
-          preference_id: data.id,
-          preference_url: data.init_point,
+          preference_id: response.id,
+          preference_url: response.init_point, // URL para redirecionamento
         });
       })
       .catch((err) => {
-        console.error('Error creating preference', err);
-        res.status(500).json({ error: 'error creating preference', details: err?.message || err });
+        console.error('Error creating preference:', err);
+        const errorMessage = err?.message || String(err);
+        res.status(500).json({ 
+          error: 'error creating preference', 
+          details: errorMessage,
+          // Log adicional para debug no Vercel
+          ...(process.env.NODE_ENV === 'development' && { stack: err?.stack })
+        });
       });
 
   } catch (err) {
