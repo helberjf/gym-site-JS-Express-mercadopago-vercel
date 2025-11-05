@@ -58,6 +58,10 @@ app.get("/create-preference", (req, res) => {
 
 app.post("/create-preference", (req, res) => {
   try {
+    // Obrigatoriedade: integrator id precisa estar configurado conforme instruções
+    if (!INTEGRATOR_ID) {
+      return res.status(500).json({ error: 'MP_INTEGRATOR_ID not configured. Please set environment variable MP_INTEGRATOR_ID with the provided Integrator ID.' });
+    }
     const {
       product_id,
       title,
@@ -96,7 +100,12 @@ app.post("/create-preference", (req, res) => {
     }
     const QTY = Number(quantity || 1);
     const PICTURE = picture_url || process.env.PRODUCT_IMAGE_URL || 'https://site-gym-weld.vercel.app/logo512.png';
-    const MAX_INSTALLMENTS = Number(max_installments || process.env.MP_MAX_INSTALLMENTS || 6);
+     // ---- MAX INSTALLMENTS: authoritative backend rule, forced between 1 and 6 ----
+     const ENV_MAX = Number(process.env.MP_MAX_INSTALLMENTS || 6);
+     const requestedMax = Number(max_installments || ENV_MAX || 6);
+     const MAX_INSTALLMENTS = Math.max(1, Math.min(Math.floor(requestedMax || 6), 6)); // integer 1..6
+     console.log('MAX_INSTALLMENTS:', MAX_INSTALLMENTS);
+
     
     // Validar picture_url simples (https)
     const isValidUrl = (url) => {
@@ -141,8 +150,21 @@ app.post("/create-preference", (req, res) => {
         }
       ],
       external_reference: externalRef,
-      payment_methods: {},
-      installments: MAX_INSTALLMENTS,
+      payment_methods: {
+        default_payment_method_id: 'master',
+        excluded_payment_types: [
+          {
+            id: 'ticket'
+          },
+        ],
+        excluded_payment_methods: [
+          {
+            id: 'visa',
+          },
+        ],
+        installments: 5,
+        default_installments: 1,
+      },
       back_urls: {
         success: process.env.MP_BACK_URL_SUCCESS || (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}/front-end/success.html` : 'https://site-gym-weld.vercel.app/front-end/success.html'),
         failure: process.env.MP_BACK_URL_FAILURE || (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}/front-end/failure.html` : 'https://site-gym-weld.vercel.app/front-end/failure.html'),
