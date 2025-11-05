@@ -162,7 +162,7 @@ app.post("/create-preference", (req, res) => {
             id: 'visa',
           },
         ],
-        installments: 5,
+        installments: 6,
         default_installments: 1,
       },
       back_urls: {
