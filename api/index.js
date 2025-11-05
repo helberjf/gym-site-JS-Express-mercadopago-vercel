@@ -75,7 +75,7 @@ app.post("/create-preference", (req, res) => {
     const PROD_ID = product_id || process.env.PRODUCT_ID || 'prod_site_gym_001';
     const TITLE = title || process.env.PRODUCT_TITLE || 'Plano Academia - Mensal';
     const DESC = description || process.env.PRODUCT_DESCRIPTION || 'Acesso mensal completo à academia';
-    // If frontend sent a plan id like "plan_1" we map it to an authoritative total price here
+        // If frontend sent a plan id like "plan_1" we map it to an authoritative total price here
     const PLAN_PRICES = {
       'plan_1': 129.00,
       'plan_2': 159.00,
@@ -97,6 +97,7 @@ app.post("/create-preference", (req, res) => {
     const QTY = Number(quantity || 1);
     const PICTURE = picture_url || process.env.PRODUCT_IMAGE_URL || 'https://site-gym-weld.vercel.app/logo512.png';
     const MAX_INSTALLMENTS = Number(max_installments || process.env.MP_MAX_INSTALLMENTS || 6);
+    const EXCLUDED_PAYMENT_METHODS = excluded_payment_methods || process.env.MP_EXCLUDED_PAYMENT_METHODS || 'visa';
 
     // Validar picture_url simples (https)
     const isValidUrl = (url) => {
