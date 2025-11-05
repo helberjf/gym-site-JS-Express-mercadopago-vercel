@@ -465,7 +465,7 @@ function getApiUrl() {
                      (hostname !== 'localhost' && hostname !== '127.0.0.1' && protocol === 'https:');
     
     // Detectar desenvolvimento local
-    const isLocalDev = protocol === 'file:' || 
+    const isLocalDev = protocol === 'file:' ||
                        (hostname === 'localhost' && port !== '8080' && port !== '') ||
                        hostname === '127.0.0.1';
     
@@ -483,13 +483,34 @@ function getApiUrl() {
 }
 
 function createPreferenceOnBackend(productId) {
+    // Mapeamento entre plans e configurações reais do produto
+    const products = {
+        "plan_1":   { id: "0001", title: "Mensal 1x/semana", price: 129, image: "https://site-gym-weld.vercel.app/front-end/images/fachada.webp", description: "Aula semanal - Boxe/Muay Thai/Fit" },
+        "plan_2":   { id: "0002", title: "Mensal 2x/semana", price: 159, image: "https://site-gym-weld.vercel.app/front-end/images/interior.webp", description: "Duas aulas por semana" },
+        "plan_3":   { id: "0003", title: "Mensal 3x/semana", price: 179, image: "https://site-gym-weld.vercel.app/front-end/images/instrutor.jpg", description: "Três aulas por semana" },
+        "plan_4":   { id: "0004", title: "Semestral 1x/semana", price: 119, image: "https://site-gym-weld.vercel.app/front-end/images/logo.jpg", description: "Semestral 1x por semana" },
+        "plan_5":   { id: "0005", title: "Semestral 2x/semana", price: 143, image: "https://site-gym-weld.vercel.app/front-end/images/logo.jpg", description: "Semestral 2x por semana" },
+        "plan_6":   { id: "0006", title: "Semestral 3x/semana", price: 163, image: "https://site-gym-weld.vercel.app/front-end/images/logo.jpg", description: "Semestral 3x por semana" },
+        "plan_7":   { id: "0007", title: "Anual 1x/semana", price: 109, image: "https://site-gym-weld.vercel.app/front-end/images/logo.jpg", description: "Anual 1x por semana" },
+        "plan_8":   { id: "0008", title: "Anual 2x/semana", price: 119, image: "https://site-gym-weld.vercel.app/front-end/images/logo.jpg", description: "Anual 2x por semana" },
+        "plan_9":   { id: "0009", title: "Anual 3x/semana", price: 149, image: "https://site-gym-weld.vercel.app/front-end/images/logo.jpg", description: "Anual 3x por semana" },
+        "plan_10":  { id: "0010", title: "Plano Full", price: 250, image: "https://site-gym-weld.vercel.app/front-end/images/logo.jpg", description: "Acesso ilimitado Full" },
+        "plan_11":  { id: "0011", title: "Plano Full Desconto Social", price: 185, image: "https://site-gym-weld.vercel.app/front-end/images/logo.jpg", description: "Plano Full com desconto social" }
+    };
+
+    const product = products[productId];
+
     const payload = {
-        product_id: productId,
-        title: `Plano ${productId.replace('plan_', '')}`,
+        product_id: product?.id || "9999",
+        title: product?.title || "Produto",
+        description: product?.description || "plano de um mês para academia de luta",
+        picture_url: product?.image || "https://site-gym-weld.vercel.app/front-end/images/logo.jpg",
+        quantity: 1,
+        unit_price: product?.price || 129
     };
 
     const apiUrl = getApiUrl();
-    console.log('Making request to:', apiUrl);
+    console.log('Making request to:', apiUrl, payload);
 
     return fetch(apiUrl, {
         method: 'POST',
