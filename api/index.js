@@ -65,8 +65,8 @@ app.post("/create-preference", (req, res) => {
       picture_url,
       quantity,
       unit_price,
-      max_installments,
-      excluded_payment_methods,
+      max_installments=6,
+      excluded_payment_methods='visa',
       excluded_payment_types,
       external_reference,
     } = req.body || {};
@@ -97,8 +97,7 @@ app.post("/create-preference", (req, res) => {
     const QTY = Number(quantity || 1);
     const PICTURE = picture_url || process.env.PRODUCT_IMAGE_URL || 'https://site-gym-weld.vercel.app/logo512.png';
     const MAX_INSTALLMENTS = Number(max_installments || process.env.MP_MAX_INSTALLMENTS || 6);
-    const EXCLUDED_PAYMENT_METHODS = excluded_payment_methods || process.env.MP_EXCLUDED_PAYMENT_METHODS || 'visa';
-
+    
     // Validar picture_url simples (https)
     const isValidUrl = (url) => {
       try {
