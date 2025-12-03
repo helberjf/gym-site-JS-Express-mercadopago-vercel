@@ -12,18 +12,27 @@ Site institucional da Maquina Team com integração de pagamentos via Mercado Pa
 ## 📁 Estrutura do Projeto
 
 ```
-site-gym/
+/
 ├── api/                 # API Serverless (Vercel)
-│   ├── index.js        # Endpoint principal da API
-│   └── package.json    # Dependências da API
-├── front-end/          # Front-end estático
-│   ├── index.html      # Página principal
-│   ├── script.js       # JavaScript do front-end
-│   ├── styles.css      # Estilos CSS
-│   ├── images/         # Imagens do site
-│   └── *.html          # Outras páginas (success, failure, etc)
-├── vercel.json         # Configuração do Vercel
-└── README.md           # Este arquivo
+│   ├── index.js
+│   └── package.json     # dependências da API
+├── back-end/            # aparentemente uma pasta back-end — pode haver código aqui
+├── front-end/           # front-end estático
+│   ├── index.html
+│   ├── script.js
+│   ├── styles.css
+│   ├── images/          # imagens do site
+│   └── outras *.html (success, failure etc)
+├── .gitignore
+├── CHECKLIST.md
+├── DEPLOY.md
+├── OTIMIZACOES.md
+├── README.md
+├── package.json         # dependências gerais do projeto
+├── package-lock.json
+├── script.js            # possivelmente utilitário ou script de build
+├── vercel.json          # configuração de deploy no Vercel
+
 ```
 
 ## 🔧 Configuração Local
