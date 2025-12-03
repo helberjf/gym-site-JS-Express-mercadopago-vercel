@@ -5,7 +5,7 @@ Site institucional da Maquina Team com integração de pagamentos via Mercado Pa
 ## 🚀 Tecnologias
 
 - **Front-end**: HTML5, CSS3, JavaScript (Vanilla), Bootstrap 4.5
-- **Back-end**: Node.js, Express
+- **Back-end**: Node.js, Express, Cors
 - **Pagamentos**: Mercado Pago SDK
 - **Deploy**: Vercel
 
